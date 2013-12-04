@@ -33,7 +33,7 @@ end
 
 #configure New Relic INI file and set the daemon related options (documented at /usr/lib/newrelic-php5/scripts/newrelic.ini.template)
 #and restart the web server in order to pick up the new settings
-template "#{node['php']['ext_conf_dir']}/newrelic.ini" do
+template "#{node['php-fpm']['conf_dir']}/conf.d/newrelic.ini" do
     source "newrelic.ini.php.erb"
     owner "root"
     group "root"
@@ -76,6 +76,7 @@ template "#{node['php']['ext_conf_dir']}/newrelic.ini" do
         :webtransaction_name_files => node['newrelic']['application_monitoring']['webtransaction']['name']['files']
     )
     action :create
+    notifies :restart, "service[php-fpm]", :delayed
     notifies :restart, "service[#{node['newrelic']['web_server']['service_name']}]", :delayed
 end
 
