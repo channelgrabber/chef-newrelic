@@ -33,7 +33,7 @@ end
 
 #configure New Relic INI file and set the daemon related options (documented at /usr/lib/newrelic-php5/scripts/newrelic.ini.template)
 #and restart the web server in order to pick up the new settings
-template "#{node['php-fpm']['conf_dir']}/conf.d/newrelic.ini" do
+template "#{node['php']['ext_conf_dir']}/newrelic.ini" do
     source "newrelic.ini.php.erb"
     owner "root"
     group "root"
@@ -79,6 +79,8 @@ template "#{node['php-fpm']['conf_dir']}/conf.d/newrelic.ini" do
     notifies :restart, "service[php-fpm]", :delayed
     notifies :restart, "service[#{node['newrelic']['web_server']['service_name']}]", :delayed
 end
+
+php_enable_module('newrelic')
 
 #https://newrelic.com/docs/php/newrelic-daemon-startup-modes
 Chef::Log.info("newrelic-daemon startup mode: #{node['newrelic']['startup_mode']}")
