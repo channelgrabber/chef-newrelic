@@ -80,7 +80,7 @@ template "#{node['php']['ext_conf_dir']}/newrelic.ini" do
     notifies :restart, "service[#{node['newrelic']['web_server']['service_name']}]", :delayed
 end
 
-php_enable_module('newrelic')
+enable_php_module ('newrelic')
 
 #https://newrelic.com/docs/php/newrelic-daemon-startup-modes
 Chef::Log.info("newrelic-daemon startup mode: #{node['newrelic']['startup_mode']}")
