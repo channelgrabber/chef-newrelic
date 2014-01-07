@@ -10,7 +10,7 @@ version          "0.5.5"
 supports os
 end
 
-recommends "php"
+depends "php"
 recommends "python"
 recommends "ms_dotnet4"
 recommends "curl"
