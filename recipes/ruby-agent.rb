@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: newrelic
-# Recipe:: java-agent
+# Recipe:: ruby-agent
 #
 # Copyright 2012-2014, Escape Studios
 #
@@ -9,25 +9,8 @@ include_recipe 'newrelic::repository'
 
 license = node['newrelic']['application_monitoring']['license']
 
-# create the directory to install the jar into
-directory node['newrelic']['java-agent']['install_dir'] do
-  owner node['newrelic']['java-agent']['app_user']
-  group node['newrelic']['java-agent']['app_group']
-  recursive true
-  mode 0775
-  action :create
-end
-
-remote_file = "#{node['newrelic']['java-agent']['install_dir']}/#{node['newrelic']['java-agent']['jar_file']}"
-local_file = "#{node['newrelic']['java-agent']['install_dir']}/newrelic.jar"
-
-remote_file remote_file do
-  source node['newrelic']['java-agent']['https_download']
-  owner node['newrelic']['java-agent']['app_user']
-  group node['newrelic']['java-agent']['app_group']
-  path local_file
-  mode 0664
-  not_if { File.exist?(local_file) }
+gem_package 'newrelic_rpm' do
+  action :install
 end
 
 if node['newrelic']['application_monitoring']['appname'].nil?
@@ -35,21 +18,21 @@ if node['newrelic']['application_monitoring']['appname'].nil?
 end
 
 # configure your New Relic license key
-template "#{node['newrelic']['java-agent']['install_dir']}/newrelic.yml" do
-  source 'agent/java/newrelic.yml.erb'
-  owner node['newrelic']['java-agent']['app_user']
-  group node['newrelic']['java-agent']['app_group']
+template "#{node['newrelic']['ruby-agent']['install_dir']}/newrelic.yml" do
+  source 'agent/ruby/newrelic.yml.erb'
+  owner node['newrelic']['ruby-agent']['app_user']
+  group node['newrelic']['ruby-agent']['app_group']
   mode 0644
   variables(
     :license => license,
     :appname => node['newrelic']['application_monitoring']['appname'],
+    :enabled => node['newrelic']['application_monitoring']['enabled'],
     :logfile => node['newrelic']['application_monitoring']['logfile'],
-    :logfile_path => node['newrelic']['application_monitoring']['logfile_path'],
     :loglevel => node['newrelic']['application_monitoring']['loglevel'],
-    :audit_mode => node['newrelic']['java-agent']['audit_mode'],
-    :log_file_count => node['newrelic']['java-agent']['log_file_count'],
-    :log_limit_in_kbytes => node['newrelic']['java-agent']['log_limit_in_kbytes'],
-    :log_daily => node['newrelic']['java-agent']['log_daily'],
+    :audit_mode => node['newrelic']['ruby-agent']['audit_mode'],
+    :log_file_count => node['newrelic']['ruby-agent']['log_file_count'],
+    :log_limit_in_kbytes => node['newrelic']['ruby-agent']['log_limit_in_kbytes'],
+    :log_daily => node['newrelic']['ruby-agent']['log_daily'],
     :daemon_ssl => node['newrelic']['application_monitoring']['daemon']['ssl'],
     :capture_params => node['newrelic']['application_monitoring']['capture_params'],
     :ignored_params => node['newrelic']['application_monitoring']['ignored_params'],
@@ -64,23 +47,4 @@ template "#{node['newrelic']['java-agent']['install_dir']}/newrelic.yml" do
     :cross_application_tracer_enable => node['newrelic']['application_monitoring']['cross_application_tracer']['enable']
   )
   action :create
-end
-
-# allow app_group to write to log_file_path
-path = node['newrelic']['application_monitoring']['logfile_path']
-
-until path.nil? || path.empty? || path == File::SEPARATOR
-  directory path do
-    group node['newrelic']['java-agent']['app_group']
-    mode 0775
-    action :create
-  end
-
-  path = File.dirname(path)
-end
-
-# execution of the install
-execute 'newrelic-install' do
-  command "sudo java -jar #{local_file} install"
-  only_if { node['newrelic']['java-agent']['execute_install'] }
 end
