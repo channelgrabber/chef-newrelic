@@ -33,31 +33,52 @@ files.each do |file|
   end
 end
 
-services_yml = nil
-services = {
-  '' => node['newrelic']['meetme-plugin']['services']
-}
+#services_yml = nil
+services = node['newrelic']['meetme-plugin']['services']
 
-unless services.nil?
-  require 'yaml'
-  services_yml = services.to_yaml(:indentation => 2).gsub('---', '').gsub(/!ruby\/[a-zA-Z:]*/, '')
+
+# unless services.nil?
+#   require 'yaml'
+#   services_yml = services.to_yaml(:indentation => 2).gsub('---', '').gsub(/!ruby\/[a-zA-Z:]*/, '')
+# end
+
+
+config_file = Hash.new();
+config_file['Application'] = {
+  'license_key' => license,
+  'wake_interval' => node['newrelic']['meetme-plugin']['wake_interval']
+}
+unless node['newrelic']['meetme-plugin']['proxy'].nil?
+  config_file['Application']['proxy'] = node['newrelic']['meetme-plugin']['proxy']
+end
+services.each do |service_key, service|
+  config_file['Application'][service_key] = service
 end
 
+config_file['Daemon']['user'] = node['newrelic']['meetme-plugin']['user']
+config_file['Daemon']['pidfile'] = node['newrelic']['meetme-plugin']['pid_file']
+
+config_file['Logging']['formatters']['verbose']['format'] = "\'%(levelname) -10s %(asctime)s %(process)-6d %(processName) -15s %(threadName)-10s %(name) -45s %(funcName) -25s L%(lineno)-6d: %(message)s\'"
+
+config_file['Logging']['handlers']['file']['class'] = 'logging.handlers.RotatingFileHandler'
+config_file['Logging']['handlers']['file']['class']['formatter'] = 'verbose'
+config_file['Logging']['handlers']['file']['class']['filename'] = node['newrelic']['meetme-plugin']['log_file']
+config_file['Logging']['handlers']['file']['class']['maxBytes'] = 10485760
+config_file['Logging']['handlers']['file']['class']['backupCount'] = 3
+
+config_file['Logging']['loggers']['newrelic-plugin-agent']['level'] = 'INFO'
+config_file['Logging']['loggers']['newrelic-plugin-agent']['propagate'] = 'True'
+config_file['Logging']['loggers']['newrelic-plugin-agent']['handlers'] = '[console, file]'
+config_file['Logging']['loggers']['requests']['level'] = 'ERROR'
+config_file['Logging']['loggers']['requests']['propagate'] = 'True'
+config_file['Logging']['loggers']['requests']['handlers'] = '[console, file]'
+
 # configuration file
-template node['newrelic']['meetme-plugin']['config_file'] do
-  source 'plugin/meetme/newrelic-plugin-agent.cfg.erb'
+file node['newrelic']['meetme-plugin']['config_file'] do
+  content config_file.to_yaml(:indentation => 2).gsub('---', '').gsub(/!ruby\/[a-zA-Z:]*/, '')
   owner 'root'
   group 'root'
   mode 0644
-  variables(
-    :license_key => license,
-    :wake_interval => node['newrelic']['meetme-plugin']['wake_interval'],
-    :proxy => node['newrelic']['meetme-plugin']['proxy'],
-    :services_yml => services_yml,
-    :user => node['newrelic']['meetme-plugin']['user'],
-    :pid_file => node['newrelic']['meetme-plugin']['pid_file'],
-    :log_file => node['newrelic']['meetme-plugin']['log_file']
-  )
   action :create
   notifies :restart, "service[#{node['newrelic']['meetme-plugin']['service_name']}]", :delayed
 end
