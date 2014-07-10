@@ -63,7 +63,7 @@ config_file['Daemon'] = {
 config_file['Logging'] = {
   'formatters' => {
     'verbose' => {
-      'format' => "\'%(levelname) -10s %(asctime)s %(process)-6d %(processName) -15s %(threadName)-10s %(name) -45s %(funcName) -25s L%(lineno)-6d: %(message)s\'"
+      'format' => "%(levelname) -10s %(asctime)s %(process)-6d %(processName) -15s %(threadName)-10s %(name) -45s %(funcName) -25s L%(lineno)-6d: %(message)s"
     }
   },
   'handlers' => {
@@ -78,13 +78,13 @@ config_file['Logging'] = {
   'loggers' => {
     'newrelic-plugin-agent' => {
       'level' => 'INFO',
-      'propagate' => 'True',
-      'handlers' => '[console, file]'
+      'propagate' => True,
+      'handlers' => ["console", "file"]
     },
     'requests' => {
       'level' => 'ERROR',
-      'propagate' => 'True',
-      'handlers' => '[console, file]'
+      'propagate' => True,
+      'handlers' => ["console", "file"]
     }
   }
 }
