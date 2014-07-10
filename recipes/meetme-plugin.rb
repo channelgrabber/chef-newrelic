@@ -34,7 +34,9 @@ files.each do |file|
 end
 
 services_yml = nil
-services = node['newrelic']['meetme-plugin']['services']
+services = {
+  '#services' => node['newrelic']['meetme-plugin']['services']
+}
 
 unless services.nil?
   require 'yaml'
