@@ -34,13 +34,11 @@ files.each do |file|
 end
 
 services_yml = nil
-services = {
-  '#services' => node['newrelic']['meetme-plugin']['services']
-}
+services = node['newrelic']['meetme-plugin']['services']
 
 unless services.nil?
   require 'yaml'
-  services_yml = services.to_yaml(:indentation => 2).gsub("! '#services':", '#services:').gsub('"#services:"','').gsub('---', '').gsub(/!ruby\/[a-zA-Z:]*/, '')
+  services_yml = services.to_yaml(:indentation => 2).gsub('---', '').gsub(/!ruby\/[a-zA-Z:]*/, '')
 end
 
 # configuration file
