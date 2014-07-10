@@ -78,12 +78,12 @@ config_file['Logging'] = {
   'loggers' => {
     'newrelic-plugin-agent' => {
       'level' => 'INFO',
-      'propagate' => True,
+      'propagate' => true,
       'handlers' => ["console", "file"]
     },
     'requests' => {
       'level' => 'ERROR',
-      'propagate' => True,
+      'propagate' => true,
       'handlers' => ["console", "file"]
     }
   }
