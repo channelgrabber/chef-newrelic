@@ -38,14 +38,7 @@ file node['newrelic']['meetme-plugin']['log_file'] do
   group node['newrelic']['meetme-plugin']['user']
 end
 
-#services_yml = nil
 services = node['newrelic']['meetme-plugin']['services']
-
-
-# unless services.nil?
-#   require 'yaml'
-#   services_yml = services.to_yaml(:indentation => 2).gsub('---', '').gsub(/!ruby\/[a-zA-Z:]*/, '')
-# end
 
 
 config_file = Hash.new();
