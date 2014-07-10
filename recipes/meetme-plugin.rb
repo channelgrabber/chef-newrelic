@@ -71,7 +71,7 @@ config_file['Logging'] = {
       'class' => 'logging.handlers.RotatingFileHandler',
       'formatter' => 'verbose',
       'filename' => node['newrelic']['meetme-plugin']['log_file'],
-      'maxBytes' => 10485760
+      'maxBytes' => 10485760,
       'backupCount' => 3
     }
   },
