@@ -33,6 +33,11 @@ files.each do |file|
   end
 end
 
+file node['newrelic']['meetme-plugin']['log_file'] do
+  owner node['newrelic']['meetme-plugin']['user']
+  group node['newrelic']['meetme-plugin']['user']
+end
+
 #services_yml = nil
 services = node['newrelic']['meetme-plugin']['services']
 
