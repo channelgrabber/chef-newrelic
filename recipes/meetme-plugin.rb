@@ -55,23 +55,40 @@ services.each do |service_key, service|
   config_file['Application'][service_key] = service
 end
 
-config_file['Daemon']['user'] = node['newrelic']['meetme-plugin']['user']
-config_file['Daemon']['pidfile'] = node['newrelic']['meetme-plugin']['pid_file']
+config_file['Daemon'] = {
+  'user' => node['newrelic']['meetme-plugin']['user'],
+  'pidfile' => node['newrelic']['meetme-plugin']['pid_file']
+}
 
-config_file['Logging']['formatters']['verbose']['format'] = "\'%(levelname) -10s %(asctime)s %(process)-6d %(processName) -15s %(threadName)-10s %(name) -45s %(funcName) -25s L%(lineno)-6d: %(message)s\'"
+config_file['Logging'] = {
+  'formatters' => {
+    'verbose' => {
+      'format' => "\'%(levelname) -10s %(asctime)s %(process)-6d %(processName) -15s %(threadName)-10s %(name) -45s %(funcName) -25s L%(lineno)-6d: %(message)s\'"
+    }
+  },
+  'handlers' => {
+    'file' => {
+      'class' => 'logging.handlers.RotatingFileHandler',
+      'formatter' => 'verbose',
+      'filename' => node['newrelic']['meetme-plugin']['log_file'],
+      'maxBytes' => 10485760
+      'backupCount' => 3
+    }
+  },
+  'loggers' => {
+    'newrelic-plugin-agent' => {
+      'level' => 'INFO',
+      'propagate' => 'True',
+      'handlers' => '[console, file]'
+    },
+    'requests' => {
+      'level' => 'ERROR',
+      'propagate' => 'True',
+      'handlers' => '[console, file]'
+    }
+  }
+}
 
-config_file['Logging']['handlers']['file']['class'] = 'logging.handlers.RotatingFileHandler'
-config_file['Logging']['handlers']['file']['class']['formatter'] = 'verbose'
-config_file['Logging']['handlers']['file']['class']['filename'] = node['newrelic']['meetme-plugin']['log_file']
-config_file['Logging']['handlers']['file']['class']['maxBytes'] = 10485760
-config_file['Logging']['handlers']['file']['class']['backupCount'] = 3
-
-config_file['Logging']['loggers']['newrelic-plugin-agent']['level'] = 'INFO'
-config_file['Logging']['loggers']['newrelic-plugin-agent']['propagate'] = 'True'
-config_file['Logging']['loggers']['newrelic-plugin-agent']['handlers'] = '[console, file]'
-config_file['Logging']['loggers']['requests']['level'] = 'ERROR'
-config_file['Logging']['loggers']['requests']['propagate'] = 'True'
-config_file['Logging']['loggers']['requests']['handlers'] = '[console, file]'
 
 # configuration file
 file node['newrelic']['meetme-plugin']['config_file'] do
