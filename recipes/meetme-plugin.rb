@@ -61,7 +61,7 @@ unless node['newrelic']['meetme-plugin']['proxy'].nil?
   config_file['Application']['proxy'] = node['newrelic']['meetme-plugin']['proxy']
 end
 services.each do |service_key, service|
-  config_file['Application'][service_key] = service.to_hash
+  config_file['Application'][service_key] = service.to_a
 end
 
 config_file['Daemon'] = {
