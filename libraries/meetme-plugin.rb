@@ -6,7 +6,7 @@ def convertChefMashToHash(mashrray)
 		end
 	end
 	if mashrray.is_a?(Chef::Node::ImmutableArray)
-		mashrray = mashrray.a
+		mashrray = mashrray.to_a
 		mashrray.each_index do |index|
 			mashrray[index] = convertChefMashToHash(mashrray[index])
 		end
