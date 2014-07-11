@@ -1,11 +1,10 @@
 def convertChefMashToHash(mashrray)
-	if mashrray.is_a?(Chef::Node::ImmutableMash)
+	if mashrray.kind_of?(Chef::Node::ImmutableMash)
 		mashrray = mashrray.to_hash
 		mashrray.each do |key, value|
 			mashrray[key] = convertChefMashToHash(value)
 		end
-	end
-	if mashrray.is_a?(Chef::Node::ImmutableArray)
+	elsif mashrray.kind_of?(Chef::Node::ImmutableArray)
 		mashrray = mashrray.to_a
 		mashrray.each_index do |index|
 			mashrray[index] = convertChefMashToHash(mashrray[index])
