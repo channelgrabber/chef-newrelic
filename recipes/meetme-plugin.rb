@@ -10,7 +10,7 @@ include_recipe node['newrelic']['meetme-plugin']['python_recipe']
 license = node['newrelic']['plugin_monitoring']['license']
 
 # install latest plugin agent
-python_pip "git+ssh://git@github.com:channelgrabber/newrelic-plugin-agent.git" do
+python_pip "git+https://github.com/channelgrabber/newrelic-plugin-agent.git" do
   if node['newrelic']['python-agent']['python_venv']
     virtualenv node['newrelic']['python-agent']['python_venv']
   end
