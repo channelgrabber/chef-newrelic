@@ -41,11 +41,13 @@ end
 file node['newrelic']['meetme-plugin']['log_file'] do
   owner node['newrelic']['meetme-plugin']['user']
   group node['newrelic']['meetme-plugin']['user']
+  mode 0755
 end
 
 file node['newrelic']['meetme-plugin']['pid_file'] do
   owner node['newrelic']['meetme-plugin']['user']
   group node['newrelic']['meetme-plugin']['user']
+  mode 0755
 end
 
 services = node['newrelic']['meetme-plugin']['services']
