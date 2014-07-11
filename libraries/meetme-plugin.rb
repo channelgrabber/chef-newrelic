@@ -1,4 +1,7 @@
 def convertChefMashToHash(mashrray)
+	puts "###/////////////////////////////////////////////////////////////////////////////" 
+	puts "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" 
+	puts "///////////////////////////////////////////////////////////////////////////////"
 	if mashrray.kind_of?(::Chef::Node::ImmutableMash)
 		mashrray = mashrray.to_hash
 		mashrray.each do |key, value|
