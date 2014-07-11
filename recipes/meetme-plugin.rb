@@ -40,13 +40,7 @@ file node['newrelic']['meetme-plugin']['log_file'] do
   group node['newrelic']['meetme-plugin']['user']
 end
 
-file node['newrelic']['meetme-plugin']['config_file'] do
-  owner node['newrelic']['meetme-plugin']['user']
-  group node['newrelic']['meetme-plugin']['user']
-end
-
 services = node['newrelic']['meetme-plugin']['services']
-
 
 config_file = Hash.new();
 config_file['Application'] = {
