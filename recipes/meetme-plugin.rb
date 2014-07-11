@@ -17,7 +17,10 @@ python_pip node['newrelic']['meetme-plugin']['service_name'] do
   action :upgrade
 end
 
-python_pip "pymongo"
+
+if node['newrelic']['meetme-plugin']['services'].has_key?('mongodb')
+  python_pip "pymongo"
+end
 
 # create the configuration, run and log directories,
 # making sure they are writable by the user specified in the configuration file
