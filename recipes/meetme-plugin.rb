@@ -61,6 +61,9 @@ unless node['newrelic']['meetme-plugin']['proxy'].nil?
   config_file['Application']['proxy'] = node['newrelic']['meetme-plugin']['proxy']
 end
 
+puts "###/////////////////////////////////////////////////////" 
+puts services.class.inspect 
+
 convertChefMashToHash(services)
 
 services.each do |service_key, service|
