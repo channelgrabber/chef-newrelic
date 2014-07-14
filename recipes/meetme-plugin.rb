@@ -61,7 +61,9 @@ unless node['newrelic']['meetme-plugin']['proxy'].nil?
   config_file['Application']['proxy'] = node['newrelic']['meetme-plugin']['proxy']
 end
 
-convertChefMashToHash(services)
+#convertChefMashToHash(services)
+
+services = services.to_hash
 
 services.each do |service_key, service|
   config_file['Application'][service_key] = service

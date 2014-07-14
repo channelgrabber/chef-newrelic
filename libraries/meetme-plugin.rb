@@ -2,12 +2,12 @@ def convertChefMashToHash(mashrray)
 	if mashrray.kind_of?(::Chef::Node::ImmutableMash)
 		mashrray = fromImmutableMashToHash(mashrray)
 		mashrray.each do |key, value|
-			convertChefMashToHash(value)
+			mashrray[key] = convertChefMashToHash(value)
 		end
 	elsif mashrray.kind_of?(::Chef::Node::ImmutableArray)
 		mashrray = fromImmutableArrayToArray(mashrray)
 		mashrray.each_index do |index|
-			convertChefMashToHash(mashrray[index])
+			mashrray[index] = convertChefMashToHash(mashrray[index])
 		end
 	end
 end
@@ -26,4 +26,22 @@ def fromImmutableMashToHash(mash)
 		new_hash[key] = value
 	end
 	return new_hash
+end
+
+class Chef
+  class Node
+   class ImmutableMash
+      def to_hash
+        h = {}
+        self.each do |k,v|
+          if v.respond_to?('to_hash')
+            h[k] = v.to_hash
+          else
+            h[k] = v
+          end
+        end
+        return h
+      end
+    end
+  end
 end
