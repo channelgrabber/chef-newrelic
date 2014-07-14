@@ -12,6 +12,7 @@ def convertImmutableMashToHash(mashrray)
 		end
 		return mashrray
 	end
+	return mashrray
 end
 
 def fromImmutableArrayToArray(array)
