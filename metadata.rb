@@ -11,6 +11,7 @@ version '1.0.6'
 end
 
 depends 'python'
+depends 'php-fpm'
 
 recommends 'php'
 recommends 'ms_dotnet4'
