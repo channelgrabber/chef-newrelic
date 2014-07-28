@@ -13,6 +13,10 @@ if node.attribute?('php')
   end
 end
 
+if !node.recipe?("php-fpm")
+  return
+end
+
 default['newrelic']['php-agent']['install_silently'] = false
 default['newrelic']['php-agent']['startup_mode'] = 'agent'
 default['newrelic']['php-agent']['web_server']['service_name'] = 'nginx'
