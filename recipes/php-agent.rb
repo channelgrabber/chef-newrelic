@@ -32,8 +32,25 @@ execute 'newrelic-install' do
     )
   end
   action :nothing
+  notifies :delete, "file[newrelic-delete-cli-ini]", :delayed
+  if node.recipes.include?('php-fpm')
+    notifies :delete, "file[newrelic-delete-fpm-ini]", :delayed
+  end
   if node['newrelic']['php-agent']['web_server']['service_name']
     notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
+  end
+end
+
+file 'newrelic-delete-cli-ini' do
+  path File.join(node['php']['conf_dir'], 'newrelic.ini')
+  action :nothing
+end
+
+if node.recipes.include?('php-fpm')
+  file 'newrelic-delete-fpm-ini' do
+    path File.join(node['php-fpm']['conf_dir'], 'newrelic.ini')
+    action :nothing
+    notifies :restart, "service[php-fpm]", :delayed
   end
 end
 
@@ -92,16 +109,6 @@ template node['newrelic']['php-agent']['config_file'] do
   end
   if node['newrelic']['php-agent']['web_server']['service_name']
     notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
-  end
-end
-
-file File.join(node['php']['conf_dir'], 'newrelic.ini') do
-  action :delete
-end
-
-if node.recipes.include?('php-fpm')
-  file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini') do
-    action :delete
   end
 end
 
