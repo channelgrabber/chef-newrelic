@@ -23,34 +23,13 @@ package 'newrelic-php5' do
   notifies :run, 'execute[newrelic-install]', :immediately
 end
 
-# run newrelic-install
-execute 'newrelic-install' do
-  command 'newrelic-install install'
-  if node['newrelic']['php-agent']['install_silently']
-    environment(
-      'NR_INSTALL_SILENT' => '1'
-    )
-  end
-  action :nothing
-  notifies :delete, "file[newrelic-delete-cli-ini]", :delayed
-  if node.recipes.include?('php-fpm')
-    notifies :delete, "file[newrelic-delete-fpm-ini]", :delayed
-  end
-  if node['newrelic']['php-agent']['web_server']['service_name']
-    notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
-  end
-end
-
-file 'newrelic-delete-cli-ini' do
-  path File.join(node['php']['conf_dir'], 'newrelic.ini')
-  action :nothing
+file File.join(node['php']['conf_dir'], 'newrelic.ini') do
+  action :delete
 end
 
 if node.recipes.include?('php-fpm')
-  file 'newrelic-delete-fpm-ini' do
-    path File.join(node['php-fpm']['conf_dir'], 'newrelic.ini')
-    action :nothing
-    notifies :restart, "service[php-fpm]", :delayed
+  file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini') do
+    action :delete
   end
 end
 
