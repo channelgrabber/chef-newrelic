@@ -95,6 +95,16 @@ template node['newrelic']['php-agent']['config_file'] do
   end
 end
 
+file File.join(node['php']['conf_dir'], 'newrelic.ini' do
+  action :delete
+end
+
+if node.recipes.include?('php-fpm')
+  file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini' do
+    action :delete
+  end
+end
+
 # https://newrelic.com/docs/php/newrelic-daemon-startup-modes
 Chef::Log.info("newrelic-daemon startup mode: #{node['newrelic']['php-agent']['startup_mode']}")
 
