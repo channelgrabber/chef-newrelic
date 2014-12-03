@@ -17,4 +17,4 @@ default['newrelic']['php-agent']['install_silently'] = false
 default['newrelic']['php-agent']['startup_mode'] = 'agent'
 default['newrelic']['php-agent']['web_server']['service_name'] = 'nginx'
 default['newrelic']['php-agent']['php_recipe'] = 'php::default'
-default['newrelic']['php-agent']['config_file'] = "#{node['php-fpm']['conf_dir']}/conf.d/newrelic.ini"
+default['newrelic']['php-agent']['config_file'] = "#{node['php']['ext_conf_dir']}/newrelic.ini"
