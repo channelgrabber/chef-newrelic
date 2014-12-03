@@ -95,12 +95,12 @@ template node['newrelic']['php-agent']['config_file'] do
   end
 end
 
-file File.join(node['php']['conf_dir'], 'newrelic.ini' do
+file File.join(node['php']['conf_dir'], 'newrelic.ini') do
   action :delete
 end
 
 if node.recipes.include?('php-fpm')
-  file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini' do
+  file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini') do
     action :delete
   end
 end
