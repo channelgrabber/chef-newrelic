@@ -20,7 +20,6 @@ end
 # install/update latest php agent
 package 'newrelic-php5' do
   action :upgrade
-  notifies :run, 'execute[newrelic-install]', :immediately
 end
 
 file File.join(node['php']['conf_dir'], 'newrelic.ini') do
