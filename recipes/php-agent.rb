@@ -95,8 +95,6 @@ template node['newrelic']['php-agent']['config_file'] do
   end
 end
 
-enable_pear_mod(File.basename(node['newrelic']['php-agent']['config_file']))
-
 # https://newrelic.com/docs/php/newrelic-daemon-startup-modes
 Chef::Log.info("newrelic-daemon startup mode: #{node['newrelic']['php-agent']['startup_mode']}")
 
