@@ -13,23 +13,23 @@ license = node['newrelic']['application_monitoring']['license']
 # the older version (3.0) had a bug in the init scripts that when it shut down the daemon it would also kill dpkg as it was trying to upgrade
 # let's remove the old packages before continuing
 package 'newrelic-php5' do
-  action :remove
+  action :nothing
   version '3.0.5.95'
-end
+end.run_action(:remove)
 
 # install/update latest php agent
 package 'newrelic-php5' do
-  action :upgrade
-end
+  action :nothing
+end.run_action(:upgrade)
 
 file File.join(node['php']['conf_dir'], 'newrelic.ini') do
-  action :delete
-end
+  action :nothing
+end.run_action(:delete)
 
 if node.recipes.include?('php-fpm')
   file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini') do
-    action :delete
-  end
+    action :nothing
+  end.run_action(:delete)
 end
 
 service 'newrelic-daemon' do
