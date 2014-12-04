@@ -22,6 +22,10 @@ package 'newrelic-php5' do
   action :nothing
 end.run_action(:upgrade)
 
+puts '*' * 50
+puts 'Start'
+puts '*' * 50
+
 file File.join(node['php']['conf_dir'], 'newrelic.ini') do
   action :nothing
 end.run_action(:delete)
@@ -31,6 +35,10 @@ if node.recipes.include?('php-fpm')
     action :nothing
   end.run_action(:delete)
 end
+
+puts '*' * 50
+puts 'End'
+puts '*' * 50
 
 service 'newrelic-daemon' do
   supports :status => true, :start => true, :stop => true, :restart => true
