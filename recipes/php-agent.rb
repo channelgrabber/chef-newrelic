@@ -22,23 +22,25 @@ package 'newrelic-php5' do
   action :nothing
 end.run_action(:upgrade)
 
-puts '*' * 50
-puts 'Start'
-puts '*' * 50
-
-file File.join(node['php']['conf_dir'], 'newrelic.ini') do
-  action :nothing
-end.run_action(:delete)
-
-if node.recipes.include?('php-fpm')
-  file File.join(node['php-fpm']['conf_dir'], 'newrelic.ini') do
-    action :nothing
-  end.run_action(:delete)
+ruby_block 'newrelic-php5-rm-config' do
+  block do
+    config = File.join(node['php']['conf_dir'], 'newrelic.ini')
+    if File.exists?(config)
+        File.delete(config)
+    end
+  end
 end
 
-puts '*' * 50
-puts 'End'
-puts '*' * 50
+if node.recipes.include?('php-fpm')
+  ruby_block 'newrelic-fpm-rm-config' do
+    block do
+      config = File.join(node['php-fpm']['conf_dir'], 'newrelic.ini')
+      if File.exists?(config)
+          File.delete(config)
+      end
+    end
+  end
+end
 
 service 'newrelic-daemon' do
   supports :status => true, :start => true, :stop => true, :restart => true
