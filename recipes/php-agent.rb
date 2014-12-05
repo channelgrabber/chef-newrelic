@@ -23,12 +23,12 @@ package 'newrelic-php5' do
 end.run_action(:upgrade)
 
 file File.join(node['php']['conf_dir'], 'conf.d', 'newrelic.ini') do
-  action :remove
+  action :delete
 end
 
 if node.recipes.include?('php-fpm')
   file File.join(node['php-fpm']['conf_dir'], 'conf.d', 'newrelic.ini') do
-    action :remove
+    action :delete
   end
 end
 
