@@ -22,25 +22,13 @@ package 'newrelic-php5' do
   action :nothing
 end.run_action(:upgrade)
 
-ruby_block 'newrelic-php5-rm-config' do
-  block do
-    config = File.join(node['php']['conf_dir'], 'newrelic.ini')
-    ::Chef::Log.info("Removing php config: #{config}")
-    if File.exists?(config)
-        File.delete(config)
-    end
-  end
+file File.join(node['php']['conf_dir'], 'conf.d', 'newrelic.ini') do
+  action :remove
 end
 
 if node.recipes.include?('php-fpm')
-  ruby_block 'newrelic-fpm-rm-config' do
-    block do
-      config = File.join(node['php-fpm']['conf_dir'], 'newrelic.ini')
-      ::Chef::Log.info("Removing fpm config: #{config}")
-      if File.exists?(config)
-          File.delete(config)
-      end
-    end
+  file File.join(node['php-fpm']['conf_dir'], 'conf.d', 'newrelic.ini') do
+    action :remove
   end
 end
 
