@@ -85,7 +85,9 @@ template node['newrelic']['php-agent']['config_file'] do
   if node.recipes.include?('php-fpm')
     notifies :restart, "service[php-fpm]", :delayed
   end
-  if node['newrelic']['php-agent']['web_server']['service_name']
+  if node['newrelic']['php-agent']['web_server'].has_key?('service_name') &&
+      node['newrelic']['php-agent']['web_server']['service_name'].is_a?(String) &&
+      node['newrelic']['php-agent']['web_server']['service_name'].length > 0
     notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
   end
 end
@@ -136,7 +138,11 @@ when 'external'
     )
     action :create
     notifies :restart, 'service[newrelic-daemon]', :immediately
-    notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
+    if node['newrelic']['php-agent']['web_server'].has_key?('service_name') &&
+        node['newrelic']['php-agent']['web_server']['service_name'].is_a?(String) &&
+        node['newrelic']['php-agent']['web_server']['service_name'].length > 0
+      notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
+    end
   end
 
   service 'newrelic-daemon' do
