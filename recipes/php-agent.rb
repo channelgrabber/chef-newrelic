@@ -82,13 +82,29 @@ template node['newrelic']['php-agent']['config_file'] do
     :cross_application_tracer_enable => node['newrelic']['application_monitoring']['cross_application_tracer']['enable']
   )
   action :create
-  if node.recipes.include?('php-fpm')
-    notifies :restart, "service[php-fpm]", :delayed
-  end
   if node['newrelic']['php-agent']['web_server'].has_key?('service_name') &&
       node['newrelic']['php-agent']['web_server']['service_name'].is_a?(String) &&
       node['newrelic']['php-agent']['web_server']['service_name'].length > 0
     notifies :restart, "service[#{node['newrelic']['php-agent']['web_server']['service_name']}]", :delayed
+  end
+end
+
+node['cg_php']['versions'].to_a.uniq.each do |php_version|
+  link "/etc/php/#{php_version}/mods-available/newrelic.ini" do
+    to node['newrelic']['php-agent']['config_file']
+  end
+
+  extensions = node['cg_php']['extensions'].to_a
+  if node['cg_php'].has_key?(php_version) && node['cg_php'][php_version].has_key?('extensions')
+    extensions.push *node['cg_php'][version]['extensions'].to_a
+  end
+
+  execute "pecl#{php_version} newrelic enable" do
+    command "phpenmod -v #{php_version} -s ALL newrelic"
+    if extensions.include?('fpm')
+      notifies :reload, "php#{php_version}-fpm", :delayed
+    end
+    action :run
   end
 end
 
