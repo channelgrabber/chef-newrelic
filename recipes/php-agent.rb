@@ -22,16 +22,6 @@ package 'newrelic-php5' do
   action :nothing
 end.run_action(:upgrade)
 
-file File.join(node['php']['conf_dir'], 'conf.d', 'newrelic.ini') do
-  action :delete
-end
-
-if node.recipes.include?('php-fpm')
-  file File.join(node['php-fpm']['conf_dir'], 'conf.d', 'newrelic.ini') do
-    action :delete
-  end
-end
-
 service 'newrelic-daemon' do
   supports :status => true, :start => true, :stop => true, :restart => true
 end
@@ -101,8 +91,8 @@ node['cg_php']['versions'].to_a.uniq.each do |php_version|
 
   execute "pecl#{php_version} newrelic enable" do
     command "phpenmod -v #{php_version} -s ALL newrelic"
-    if extensions.include?('fpm')
-      notifies :reload, "php#{php_version}-fpm", :delayed
+    if node.recipe?('cg_php::fpm') && extensions.include?('fpm')
+      notifies :reload, "service[php#{php_version}-fpm]", :delayed
     end
     action :run
   end
